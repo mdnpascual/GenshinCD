@@ -2,30 +2,34 @@ package com.example.genshincd;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.videolan.libvlc.IVLCVout;
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
 import org.videolan.libvlc.util.VLCVideoLayout;
 
-import java.io.IOException;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity  {
-    private static final boolean USE_TEXTURE_VIEW = false;
+public class MainActivity extends AppCompatActivity{
+    private static final boolean USE_TEXTURE_VIEW = true;
     private static final boolean ENABLE_SUBTITLES = true;
     private static final String ASSET_FILENAME = "bbb.m4v";
 
     private VLCVideoLayout mVideoLayout = null;
-//    private TextureView mVideoLayout = null;
+    private TextureView textureLayer = null;
     private Button screenshotButton = null;
 
     private LibVLC mLibVLC = null;
@@ -58,7 +62,26 @@ public class MainActivity extends AppCompatActivity  {
         screenshotButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                File sd = Environment.getExternalStorageDirectory();
+                File dest = new File(sd, "filefile" + System.currentTimeMillis() + ".jpg");
 
+                if(textureLayer == null){
+
+                    ViewGroup viewGroup = (ViewGroup) mVideoLayout.getChildAt(0);
+                    textureLayer = (TextureView) viewGroup.getChildAt(2);
+
+                }
+
+                Bitmap image = textureLayer.getBitmap();
+
+                try {
+                    FileOutputStream out = new FileOutputStream(dest);
+                    image.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                    out.flush();
+                    out.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -76,18 +99,13 @@ public class MainActivity extends AppCompatActivity  {
         super.onStart();
 
         mMediaPlayer.attachViews(mVideoLayout, null, ENABLE_SUBTITLES, USE_TEXTURE_VIEW);
-//        final IVLCVout vlcVout = mMediaPlayer.getVLCVout();
-//        vlcVout.detachViews();
-//        vlcVout.setVideoView(mVideoLayout);
-//        vlcVout.setWindowSize(mVideoLayout.getWidth(), mTextureView.getHeight());
-//        vlcVout.attachViews();
-//        mTextureView.setKeepScreenOn(true);
 
         final Media media = new Media(mLibVLC, Uri.parse("udp://@192.168.1.70:1234?pkt_size=1316"));
         media.addOption(":network-caching=150");
         media.addOption(":clock-jitter=0");
         media.addOption(":clock-synchro=0");
         mMediaPlayer.setMedia(media);
+
         media.release();
 
         mMediaPlayer.play();
