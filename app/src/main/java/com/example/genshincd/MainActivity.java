@@ -1,37 +1,32 @@
 package com.example.genshincd;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.shapes.Shape;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
+import android.view.DragEvent;
+import android.view.MotionEvent;
+import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.content.res.AppCompatResources;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
 import org.videolan.libvlc.util.VLCVideoLayout;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements View.OnTouchListener, View.OnDragListener {
     private static final boolean USE_TEXTURE_VIEW = true;
     private static final boolean ENABLE_SUBTITLES = true;
     private static final String ASSET_FILENAME = "bbb.m4v";
@@ -40,15 +35,21 @@ public class MainActivity extends AppCompatActivity{
     private TextureView textureLayer = null;
 //    private Button screenshotButton = null;
 
-    private ImageView circleOne = null;
-    private ImageView circleTwo = null;
-    private ImageView circleThree = null;
-    private ImageView circleFour = null;
+    private ViewGroup circleLayoutParent = null;
+    private ImageView circleFirst = null;
+    private ImageView circleSecond = null;
+    private ImageView circleThird = null;
+    private ImageView circleFourth = null;
     private GradientDrawable shapeOne = null;
     private GradientDrawable shapeTwo = null;
     private GradientDrawable shapeThree = null;
     private GradientDrawable shapeFour = null;
     Random rnd = new Random();
+
+    private RelativeLayout configureSettingsParent = null;
+    private Button saveButton = null;
+
+    private SurfaceView surfaceView = null;
 
     private LibVLC mLibVLC = null;
     private MediaPlayer mMediaPlayer = null;
@@ -75,28 +76,36 @@ public class MainActivity extends AppCompatActivity{
         mMediaPlayer = new MediaPlayer(mLibVLC);
 
         mVideoLayout = findViewById(R.id.video_layout);
+        surfaceView = findViewById(R.id.surface_view);
+        surfaceView.setOnTouchListener(this);
+        surfaceView.setOnDragListener(this);
+        configureSettingsParent = (RelativeLayout) findViewById(R.id.configureSettingsParent);
+        saveButton = (Button) findViewById(R.id.save_button);
 
         initLayout();
+        initOnClicks();
         looper();
 
     }
 
     public void initLayout(){
-        circleOne = findViewById(R.id.circleFirst);
+        circleLayoutParent = (ViewGroup) findViewById(R.id.circleLayoutParent);
+
+        circleFirst = findViewById(R.id.circleFirst);
         shapeOne = initShapes(shapeOne);
-        circleOne.setBackground(shapeOne);
+        circleFirst.setBackground(shapeOne);
 
-        circleTwo = findViewById(R.id.circleSecond);
+        circleSecond = findViewById(R.id.circleSecond);
         shapeTwo = initShapes(shapeTwo);
-        circleTwo.setBackground(shapeTwo);
+        circleSecond.setBackground(shapeTwo);
 
-        circleThree = findViewById(R.id.circleThird);
+        circleThird = findViewById(R.id.circleThird);
         shapeThree = initShapes(shapeThree);
-        circleThree.setBackground(shapeThree);
+        circleThird.setBackground(shapeThree);
 
-        circleFour = findViewById(R.id.circleFourth);
+        circleFourth = findViewById(R.id.circleFourth);
         shapeFour = initShapes(shapeFour);
-        circleFour.setBackground(shapeFour);
+        circleFourth.setBackground(shapeFour);
     }
 
     public GradientDrawable initShapes(GradientDrawable shape){
@@ -107,6 +116,59 @@ public class MainActivity extends AppCompatActivity{
         shape.setStroke(12, Color.BLUE);
         shape.setSize(160,60);
         return shape;
+    }
+
+    public void initOnClicks(){
+        circleFirst.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+                configureSettingsParent.setVisibility(View.VISIBLE);
+                circleLayoutParent.setVisibility(View.GONE);
+                System.out.println("first");
+
+            }
+        });
+        circleSecond .setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+                configureSettingsParent.setVisibility(View.VISIBLE);
+                circleLayoutParent.setVisibility(View.GONE);
+                System.out.println("second");
+
+            }
+        });
+        circleThird.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+                configureSettingsParent.setVisibility(View.VISIBLE);
+                circleLayoutParent.setVisibility(View.GONE);
+                System.out.println("third");
+
+            }
+        });
+        circleFourth.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+                configureSettingsParent.setVisibility(View.VISIBLE);
+                circleLayoutParent.setVisibility(View.GONE);
+                System.out.println("fourth");
+
+            }
+        });
+        saveButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+                configureSettingsParent.setVisibility(View.GONE);
+                circleLayoutParent.setVisibility(View.VISIBLE);
+                System.out.println("saveButton");
+
+            }
+        });
     }
 
     public void looper() {
@@ -177,5 +239,32 @@ public class MainActivity extends AppCompatActivity{
 
         mMediaPlayer.stop();
         mMediaPlayer.detachViews();
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        System.out.println("touching");
+        System.out.println(event.getAction());
+        System.out.println(event.getX());
+        System.out.println(event.getY());
+        return false;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        System.out.println("moving");
+        System.out.println(event.getAction());
+        System.out.println(event.getX());
+        System.out.println(event.getY());
+        return false;
+    }
+
+    @Override
+    public boolean onDrag(View v, DragEvent event) {
+        System.out.println("dragging");
+        System.out.println(event.getAction());
+        System.out.println(event.getX());
+        System.out.println(event.getY());
+        return false;
     }
 }

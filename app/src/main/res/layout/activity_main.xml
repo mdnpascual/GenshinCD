@@ -13,49 +13,163 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="false" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
+    <SurfaceView
+        android:id="@+id/surface_view"
         android:background="@android:color/transparent"
-        android:layout_alignParentBottom="true"
-        >
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </SurfaceView>
+
+    <RelativeLayout
+        android:id="@+id/configureSettingsParent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"><!--TODO: SET VISIBILITY TO GONE-->
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="80dp"
+            android:layout_height="60dp"
+            android:background="@android:color/holo_green_light"
+            android:visibility="visible"
+            android:text="Save"/>
+
+        <LinearLayout
+            android:id="@+id/settingBottom"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@android:color/transparent"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+            </Space>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:background="@android:color/transparent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Cooldown Text"
+                    android:gravity="center"
+                    android:textSize="24dp"
+                    android:textColor="@color/white"
+                    android:background="@android:color/transparent"
+                    android:layout_weight="1"/>
+
+                <ImageView
+                    android:id="@+id/box_button"
+                    android:layout_width="80dp"
+                    android:layout_height="60dp"
+                    android:background="@android:color/transparent"
+                    android:visibility="visible"
+                    android:src="@drawable/crosshair"
+                    android:layout_weight="1"/><!--TODO: CHANGE PICTURE TO BOUNDING BOX-->
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:background="@android:color/transparent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Target White\nNumber Box"
+                    android:gravity="center"
+                    android:textSize="24dp"
+                    android:textColor="@color/white"
+                    android:background="@android:color/transparent"
+                    android:layout_weight="1"/>
+
+                <ImageView
+                    android:id="@+id/crosshair_button"
+                    android:layout_width="80dp"
+                    android:layout_height="60dp"
+                    android:background="@android:color/transparent"
+                    android:visibility="visible"
+                    android:src="@drawable/crosshair"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+            </Space>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/circleLayoutParent"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:background="@android:color/transparent"
+        android:layout_centerVertical="true"
+        android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/circleFirst"
-            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_width="fill_parent"
             android:layout_height="match_parent"
-            android:paddingLeft="30dp">
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
 
         </ImageView>
 
         <ImageView
             android:id="@+id/circleSecond"
-            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_width="fill_parent"
             android:layout_height="match_parent"
             android:paddingLeft="30dp"
-            android:layout_toRightOf="@id/circleFirst">
+            android:layout_toRightOf="@id/circleFirst"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
 
         </ImageView>
 
         <ImageView
             android:id="@+id/circleThird"
-            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_width="fill_parent"
             android:layout_height="match_parent"
             android:paddingLeft="30dp"
-            android:layout_toRightOf="@id/circleSecond">
+            android:layout_toRightOf="@id/circleSecond"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
 
         </ImageView>
 
         <ImageView
             android:id="@+id/circleFourth"
-            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_width="fill_parent"
             android:layout_height="match_parent"
             android:paddingLeft="30dp"
-            android:layout_toRightOf="@id/circleThird">
+            android:layout_toRightOf="@id/circleThird"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
 
         </ImageView>
 
-    </RelativeLayout>
+    </LinearLayout>
 
 
     <!--        <TextureView-->
