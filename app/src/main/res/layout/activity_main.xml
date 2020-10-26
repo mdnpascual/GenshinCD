@@ -34,7 +34,16 @@
             android:layout_height="60dp"
             android:background="@android:color/holo_green_light"
             android:visibility="visible"
+            android:gravity="center"
             android:text="Save"/>
+
+        <ImageView
+            android:id="@+id/crosshair"
+            android:layout_width="80dp"
+            android:layout_height="60dp"
+            android:background="@android:color/transparent"
+            android:visibility="invisible"
+            android:src="@drawable/crosshair"/>
 
         <LinearLayout
             android:id="@+id/settingBottom"
@@ -79,6 +88,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/crosshairLayourParent"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"

@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import org.videolan.libvlc.LibVLC;
@@ -26,7 +25,7 @@ import org.videolan.libvlc.util.VLCVideoLayout;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity implements View.OnTouchListener, View.OnDragListener {
+public class MainActivity extends AppCompatActivity {
     private static final boolean USE_TEXTURE_VIEW = true;
     private static final boolean ENABLE_SUBTITLES = true;
     private static final String ASSET_FILENAME = "bbb.m4v";
@@ -47,9 +46,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     Random rnd = new Random();
 
     private RelativeLayout configureSettingsParent = null;
+    private ViewGroup crosshairLayoutParent = null;
     private Button saveButton = null;
+    private ImageView crosshair = null;
 
     private SurfaceView surfaceView = null;
+
+    private float pointerX, pointerY = 0;
 
     private LibVLC mLibVLC = null;
     private MediaPlayer mMediaPlayer = null;
@@ -77,10 +80,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         mVideoLayout = findViewById(R.id.video_layout);
         surfaceView = findViewById(R.id.surface_view);
-        surfaceView.setOnTouchListener(this);
-        surfaceView.setOnDragListener(this);
-        configureSettingsParent = (RelativeLayout) findViewById(R.id.configureSettingsParent);
-        saveButton = (Button) findViewById(R.id.save_button);
 
         initLayout();
         initOnClicks();
@@ -90,6 +89,11 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     public void initLayout(){
         circleLayoutParent = (ViewGroup) findViewById(R.id.circleLayoutParent);
+        crosshairLayoutParent = (ViewGroup) findViewById(R.id.crosshairLayourParent);
+
+        configureSettingsParent = (RelativeLayout) findViewById(R.id.configureSettingsParent);
+        saveButton = (Button) findViewById(R.id.save_button);
+        crosshair = (ImageView) findViewById(R.id.crosshair);
 
         circleFirst = findViewById(R.id.circleFirst);
         shapeOne = initShapes(shapeOne);
@@ -119,6 +123,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     public void initOnClicks(){
+
+        // FIRST CIRCLE
         circleFirst.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -129,6 +135,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
             }
         });
+
+        // SECOND CIRCLE
         circleSecond .setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -139,6 +147,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
             }
         });
+
+        // THIRD CIRCLE
         circleThird.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -149,6 +159,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
             }
         });
+
+        // FOURTH CIRCLE
         circleFourth.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -159,6 +171,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
             }
         });
+
+        // SAVE BUTTON
         saveButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -166,6 +180,24 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 configureSettingsParent.setVisibility(View.GONE);
                 circleLayoutParent.setVisibility(View.VISIBLE);
                 System.out.println("saveButton");
+
+            }
+        });
+
+        // CROSSHAIR BUTTON
+        crosshairLayoutParent.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+                if(crosshair.getVisibility() == View.VISIBLE){
+                    crosshair.setVisibility(View.INVISIBLE);
+                }else{
+                    crosshair.setVisibility(View.VISIBLE);
+                    crosshair.setX((configureSettingsParent.getWidth()/2) - (crosshair.getWidth() / 2));
+                    crosshair.setY((configureSettingsParent.getHeight()/2) - (crosshair.getHeight() / 2));
+                }
+
+                System.out.println("Crosshair Button");
 
             }
         });
@@ -242,29 +274,28 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        System.out.println("touching");
-        System.out.println(event.getAction());
-        System.out.println(event.getX());
-        System.out.println(event.getY());
-        return false;
-    }
-
-    @Override
     public boolean onTouchEvent(MotionEvent event) {
-        System.out.println("moving");
-        System.out.println(event.getAction());
-        System.out.println(event.getX());
-        System.out.println(event.getY());
-        return false;
-    }
 
-    @Override
-    public boolean onDrag(View v, DragEvent event) {
-        System.out.println("dragging");
-        System.out.println(event.getAction());
-        System.out.println(event.getX());
-        System.out.println(event.getY());
+        int action = event.getActionMasked();
+        int pointer = event.getActionIndex();
+
+        switch (action){
+            case MotionEvent.ACTION_DOWN:
+                pointerX = event.getX(pointer);
+                pointerY = event.getY(pointer);
+                break;
+            case MotionEvent.ACTION_MOVE:
+
+                float newPointerX = event.getX(pointer);
+                float newPointerY = event.getY(pointer);
+
+                crosshair.setX(crosshair.getX() + (newPointerX - pointerX));
+                crosshair.setY(crosshair.getY() + (newPointerY - pointerY));
+
+                pointerX = newPointerX;
+                pointerY = newPointerY;
+                break;
+        }
         return false;
     }
 }
