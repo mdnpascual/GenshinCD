@@ -26,16 +26,7 @@
         android:id="@+id/configureSettingsParent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible"><!--TODO: SET VISIBILITY TO GONE-->
-
-        <Button
-            android:id="@+id/save_button"
-            android:layout_width="80dp"
-            android:layout_height="60dp"
-            android:background="@android:color/holo_green_light"
-            android:visibility="visible"
-            android:gravity="center"
-            android:text="Save"/>
+        android:visibility="gone"><!--TODO: SET VISIBILITY TO GONE-->
 
         <ImageView
             android:id="@+id/crosshair"
@@ -43,32 +34,43 @@
             android:layout_height="60dp"
             android:background="@android:color/transparent"
             android:visibility="invisible"
-            android:src="@drawable/crosshair"/>
+            android:src="@drawable/crosshair"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:id="@+id/square"
+            android:layout_width="80dp"
+            android:layout_height="60dp"
+            android:background="@android:color/transparent"
+            android:visibility="invisible"
+            android:src="@drawable/square"
+            android:layout_weight="1"/>
 
         <LinearLayout
             android:id="@+id/settingBottom"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
             android:background="@android:color/transparent"
-            android:layout_alignParentBottom="true"
-            android:orientation="horizontal">
+            android:layout_alignParentLeft="true"
+            android:orientation="vertical">
 
             <Space
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1">
 
             </Space>
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:id="@+id/squareLayoutParent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:background="@android:color/transparent">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:text="Cooldown Text"
                     android:gravity="center"
                     android:textSize="24dp"
@@ -82,15 +84,21 @@
                     android:layout_height="60dp"
                     android:background="@android:color/transparent"
                     android:visibility="visible"
-                    android:src="@drawable/crosshair"
+                    android:src="@drawable/square"
                     android:layout_weight="1"/><!--TODO: CHANGE PICTURE TO BOUNDING BOX-->
 
             </LinearLayout>
 
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+            </Space>
+
             <LinearLayout
-                android:id="@+id/crosshairLayourParent"
+                android:id="@+id/crosshairLayoutParent"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:background="@android:color/transparent">
 
@@ -116,10 +124,20 @@
             </LinearLayout>
 
             <Space
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1">
             </Space>
+
+            <Button
+                android:id="@+id/save_button"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@android:color/holo_green_light"
+                android:visibility="visible"
+                android:gravity="center"
+                android:text="Save"
+                android:layout_weight="0.7"/>
 
         </LinearLayout>
 
