@@ -35,16 +35,16 @@
             android:background="@android:color/transparent"
             android:visibility="invisible"
             android:src="@drawable/crosshair"
-            android:layout_weight="1"/>
+            android:layout_weight="1"/><!--TODO: SET VISIBILITY TO INVISIBLE-->
 
         <ImageView
             android:id="@+id/square"
             android:layout_width="80dp"
-            android:layout_height="60dp"
+            android:layout_height="34dp"
             android:background="@android:color/transparent"
             android:visibility="invisible"
             android:src="@drawable/square"
-            android:layout_weight="1"/>
+            android:layout_weight="1"/><!--TODO: SET VISIBILITY TO INVISIBLE-->
 
         <LinearLayout
             android:id="@+id/settingBottom"

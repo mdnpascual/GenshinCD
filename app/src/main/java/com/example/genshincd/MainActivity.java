@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Pair;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -14,16 +16,23 @@ import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
+import com.googlecode.tesseract.android.ResultIterator;
+import com.googlecode.tesseract.android.TessBaseAPI;
 
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
 import org.videolan.libvlc.util.VLCVideoLayout;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -72,11 +81,26 @@ public class MainActivity extends AppCompatActivity {
     private Character C_third = null;
     private Character C_fourth = null;
 
+    // TESSERACT
+    static final String TESSBASE_PATH = Environment.getExternalStorageDirectory().toString();
+    static final String DEFAULT_LANGUAGE = "eng";
+    private static final String TESSDATA_PATH = TESSBASE_PATH + "/tessdata/";
+    TessBaseAPI baseApi = null;
+    private volatile Boolean blockExec = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // TESSERACT
+        baseApi = new TessBaseAPI();
+        boolean success = baseApi.init(TESSBASE_PATH, DEFAULT_LANGUAGE);
+        System.out.println(success);
+        baseApi.setPageSegMode(TessBaseAPI.PageSegMode.PSM_RAW_LINE);
+        baseApi.setVariable(TessBaseAPI.VAR_CHAR_WHITELIST, "0123456789.");
+
         getSupportActionBar().hide();
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_main);
 
@@ -171,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // SECOND CIRCLE
-        circleSecond .setOnClickListener(new View.OnClickListener(){
+        circleSecond.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
 
@@ -264,6 +288,8 @@ public class MainActivity extends AppCompatActivity {
                 charToChange.squareScale = square.getScaleX();
                 charToChange.save();
 
+                activeObject = -1;
+
                 configureSettingsParent.setVisibility(View.GONE);
                 circleLayoutParent.setVisibility(View.VISIBLE);
                 System.out.println("saveButton");
@@ -302,7 +328,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 while(true){
                     try {
-                        Thread.sleep(50);
+                        Thread.sleep(35);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -326,12 +352,55 @@ public class MainActivity extends AppCompatActivity {
                                 shapeTwo.setColor(Color.argb(255, Color.red(image.getPixel(width/4,height/4)), Color.green(image.getPixel(width/4,height/4)), Color.blue(image.getPixel(width/4,height/4))));
                                 shapeThree.setColor(Color.argb(255, Color.red(image.getPixel(width/2,height/2)), Color.green(image.getPixel(width/2,height/2)), Color.blue(image.getPixel(width/2,height/2))));
                                 shapeFour.setColor(Color.argb(255, Color.red(image.getPixel(3*width/4,3*height/4)), Color.green(image.getPixel(3*width/4,3*height/4)), Color.blue(image.getPixel(3*width/4,3*height/4))));
+
+                                if(!blockExec && activeObject == 2){
+//                                    getScreenshot(image);
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            tessExecute(image);
+                                        }
+                                    }).start();
+                                }
+
                             }
                         }
                     });
                 }
             }
         }).start();
+    }
+
+    private void tessExecute(Bitmap image) {
+        blockExec = true;
+
+        Bitmap cropped = Bitmap.createBitmap(image, (int)square.getX() + (int)(square.getWidth() * 0.33), (int)square.getY() + (int)(square.getHeight() * 0.33), (int)(square.getWidth()*0.33), (int)(square.getHeight()*0.33));
+        baseApi.setImage(cropped);
+        String recognizedText = baseApi.getUTF8Text();
+        if(baseApi.meanConfidence() > 80){
+            System.out.println(recognizedText);
+        }
+
+        blockExec = false;
+    }
+
+    private void getScreenshot(Bitmap image) {
+
+        Bitmap cropped = Bitmap.createBitmap(image, (int)square.getX() + (int)(square.getWidth() * 0.33), (int)square.getY() + (int)(square.getHeight() * 0.33), (int)(square.getWidth()*0.33), (int)(square.getHeight()*0.33));
+        try {
+            File sd = Environment.getExternalStorageDirectory();
+            File dir = new File(sd.getAbsolutePath()+"/deleteplz");
+            if(!dir.exists() || !dir.isDirectory()){
+                dir.mkdir();
+            }
+            File dest = new File(dir, "filefile" + System.currentTimeMillis() + ".jpg");
+            FileOutputStream out = new FileOutputStream(dest);
+            cropped.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -347,7 +416,7 @@ public class MainActivity extends AppCompatActivity {
 
         mMediaPlayer.attachViews(mVideoLayout, null, ENABLE_SUBTITLES, USE_TEXTURE_VIEW);
 
-        final Media media = new Media(mLibVLC, Uri.parse("udp://@192.168.1.70:1234?pkt_size=1316"));
+        final Media media = new Media(mLibVLC, Uri.parse("udp://@192.168.1.9:1234?pkt_size=1316"));
         media.addOption(":network-caching=150");
         media.addOption(":clock-jitter=0");
         media.addOption(":clock-synchro=0");

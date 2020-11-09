@@ -25,7 +25,7 @@ public class Character {
         crossHairY = sharedPref.getInt(position+"crossHairY", 0);
         squareX = sharedPref.getInt(position+"squareX", 0);
         squareY = sharedPref.getInt(position+"squareY", 0);
-        squareScale = Float.parseFloat(sharedPref.getString(position+"squareScale", "1.0"));
+        squareScale = sharedPref.getFloat(position+"squareScale", (float)1.0);
         this.position = position;
     }
 
@@ -35,7 +35,7 @@ public class Character {
         editor.putInt(position+"crossHairY", crossHairY);
         editor.putInt(position+"squareX", squareX);
         editor.putInt(position+"squareY", squareY);
-        editor.putFloat(position+squareScale, squareScale);
+        editor.putFloat(position+"squareScale", squareScale);
         editor.commit();
     }
 }
